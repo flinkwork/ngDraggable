@@ -532,9 +532,9 @@ angular.module("ngDraggable", [])
                     verticalScroll: attrs.verticalScroll || true,
                     horizontalScroll: attrs.horizontalScroll || true,
                     activationDistance: attrs.activationDistance || 75,
-                    scrollDistance: attrs.scrollDistance || 15
+                    scrollDistance: attrs.scrollDistance || 15,
+                    scrollContainer: angular.element(attrs.scrollContainer) || $document[0].documentElement
                 };
-
 
                 var reqAnimFrame = (function() {
                     return window.requestAnimationFrame ||
@@ -597,21 +597,20 @@ angular.module("ngDraggable", [])
                         }
 
 
-
                         if (scrollX !== 0 || scrollY !== 0) {
                             // Record the current scroll position.
-                            var currentScrollLeft = ($window.pageXOffset || $document[0].documentElement.scrollLeft);
-                            var currentScrollTop = ($window.pageYOffset || $document[0].documentElement.scrollTop);
+                            var currentScrollLeft = config.scrollContainer.scrollLeft();
+                            var currentScrollTop = config.scrollContainer.scrollTop();
 
                             // Remove the transformation from the element, scroll the window by the scroll distance
                             // record how far we scrolled, then reapply the element transformation.
                             var elementTransform = element.css('transform');
                             element.css('transform', 'initial');
 
-                            $window.scrollBy(scrollX, scrollY);
+                            config.scrollContainer.scrollTop(currentScrollTop+scrollY);
 
-                            var horizontalScrollAmount = ($window.pageXOffset || $document[0].documentElement.scrollLeft) - currentScrollLeft;
-                            var verticalScrollAmount =  ($window.pageYOffset || $document[0].documentElement.scrollTop) - currentScrollTop;
+                            var horizontalScrollAmount = config.scrollContainer.scrollLeft() - currentScrollLeft;
+                            var verticalScrollAmount =  config.scrollContainer.scrollTop() - currentScrollTop;
 
                             element.css('transform', elementTransform);
 
